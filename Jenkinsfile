@@ -68,7 +68,6 @@ pipeline {
         
         stage('Update Manifest File') {
             steps {
-                script {
                         sh '''
                             sed -i "s|mynamesandesh/bankapp:.*|mynamesandesh/bankapp:${IMAGE_TAG}|" manifest.yaml
                             
@@ -78,6 +77,5 @@ pipeline {
                     }
                 }
             }
-        }
     }
 }
