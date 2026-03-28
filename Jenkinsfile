@@ -66,31 +66,14 @@ pipeline {
             }
         }
         
-        stage('Update Manifest File in Mega-Project-CD') {
+        stage('Update Manifest File') {
             steps {
                 script {
-                    // Clean workspace before starting
-                    cleanWs()
-
-                    withCredentials([usernamePassword(credentialsId: 'git', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh '''
-                            # Clone the Mega-Project-CD repository
-                            git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/sandeshtamboli123/Mega-Project-CD.git
+                            sed -i "s|mynamesandesh/bankapp:.*|mynamesandesh/bankapp:${IMAGE_TAG}|" manifest.yaml
                             
-                            # Update the image tag in the manifest.yaml file
-                            cd Mega-Project-CD
-                            sed -i "s|mynamesandesh/bankapp:.*|mynamesandesh/bankapp:${IMAGE_TAG}|" Manifest/manifest.yaml
-                            
-                            # Confirm changes
-                            echo "Updated manifest file contents:"
-                            cat Manifest/manifest.yaml
-                            
-                            # Commit and push the changes
-                            git config user.name "Jenkins"
-                            git config user.email "jenkins@example.com"
-                            git add Manifest/manifest.yaml
-                            git commit -m "Update image tag to ${IMAGE_TAG}"
-                            git push origin main
+                            # Deploy
+                           kubectl apply -f manifest.yaml
                         '''
                     }
                 }
